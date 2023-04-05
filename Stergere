@@ -1,0 +1,53 @@
+// stergere de elemente cu un anume nume
+
+#include<stdio.h>
+#include<conio.h>
+#include<cstring>
+typedef struct {
+    char nume[20], tip[20], luna[20];
+    float pret;
+    int zi, an;
+    char is;
+}Inventar;
+
+int nrArt(FILE* f, int l)
+{
+    int n;
+    fseek(f, 0, SEEK_END);
+    n = ftell(f) / l;
+    return n;
+
+}
+int main()
+{
+    FILE* f;
+    int rez, i;
+    Inventar m;
+    char nume[20];
+    f = fopen("Inventar.dat", "rb+");
+    fread(&m, sizeof(Inventar), 1, f);
+    while (!feof(stdin))
+    {
+        printf("Numele articolului ce urmeaza a fi sters: ");
+        scanf("%s", nume);
+        while (!feof(f))
+        {
+            if (m.is)
+            {
+                rez = strcmp(m.nume, nume);
+                if (rez==0)
+                {
+                  
+                    m.is = 0;
+                    fseek(f, ftell(f) - sizeof(Inventar), 0);
+                    fwrite(&m, sizeof(Inventar), 1, f);
+                    fseek(f, 0, 1);
+                }
+            }
+            fread(&m, sizeof(Inventar), 1, f);
+        }
+    }
+    fclose(f);
+    _getch();
+    return 0;
+}
