@@ -1,0 +1,78 @@
+//citire fisier
+#include<stdio.h>
+#include<conio.h>
+typedef struct {
+	char nume[20], tip[20], luna[20];
+	float pret;
+    int zi, an;
+	char is;
+}Inventar;
+
+int nrArt(FILE* f, int l)
+{
+	 int n;
+    fseek(f, 0, SEEK_END);
+    n = ftell(f) / l;
+    return n;
+
+}
+int main()
+{
+	FILE* f;
+	int cod, i;
+	char nume[20];
+	Inventar m;
+
+	printf("\nFisier: ");
+	scanf("%s", &nume);
+	f = fopen(nume, "wb+");
+
+	printf("\n Cod produs: ");
+	scanf("%d", &cod);
+    while (!feof(stdin))
+    {
+        if (cod >= nrArt(f, sizeof(Inventar))) // daca codul > n (nr de articole)
+        {
+            m.is = 0;
+            fseek(f, 0, 2); // se duce la final
+            for (i = nrArt(f, sizeof(Inventar)); i <= cod; i++) // de la final pana la codul nostru
+            {
+                fwrite(&m, sizeof(Inventar), 1, f); // se scriu articole goale cu p.is = 0;
+            }
+        }
+        fseek(f, cod * sizeof(Inventar), 0);
+        fread(&m, sizeof(Inventar), 1, f);//& e pt sursa
+
+        if (m.is) printf("\nExista deja un produs cu acest cod");
+        else
+        {
+            fseek(f, cod * sizeof(Inventar), 0);
+            printf("\nTip: ");
+            fflush(stdin);
+            scanf("%s", &m.tip);
+
+            printf("\nNume: ");
+            scanf("%s", &m.nume);
+
+            printf("\nPret: ");
+            scanf("%f", &m.pret);
+
+            printf("\nZi: ");
+            scanf("%d", &m.zi);
+
+            printf("\nLuna: ");
+            scanf("%s", &m.luna);
+
+            printf("\nAn: ");
+            scanf("%d", &m.an);
+
+            m.is = 1;
+            fwrite(&m, sizeof(Inventar), 1, f);
+        }
+        printf("\nCod nou: ");
+        scanf("%d", &cod);
+    }
+    fclose(f);
+	_getch();
+	return 0;
+}
