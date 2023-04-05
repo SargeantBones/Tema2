@@ -1,0 +1,42 @@
+//listare fisier
+#include<stdio.h>
+#include<conio.h>
+
+typedef struct {
+	char nume[20], tip[20], luna[20];
+	float pret;
+	int zi, an;
+	char is;
+} Inventar;
+
+void CitireBtoT(const char* numeBin, const char* numeText)
+{
+	FILE* f, * g;
+	int n = 0;
+	Inventar m;
+	g = NULL;
+	f = fopen(numeBin, "rb");
+	if (!f) printf("Fisierul Binar nu a fost gasit!");
+	else {
+		g = fopen(numeText, "w");
+		fprintf(g, "     Tip   Nume   Pret   Zi   Luna   An", "");
+		fread(&m, sizeof(Inventar), 1, f);
+		while (!feof(f))
+		{
+			if (m.is)
+			{
+				fprintf(g, "\n %d %s %s %f %d %s %d", ++n, m.tip, m.nume, m.pret, m.zi, m.luna, m.an);
+			}
+			fread(&m, sizeof(Inventar), 1, f);
+		}
+
+	}
+	fclose(f);
+	fclose(g);
+}
+int main()
+{
+	CitireBtoT("Inventar.dat", "Raport.txt");
+	_getch();
+	return 0;
+}
