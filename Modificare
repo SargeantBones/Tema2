@@ -1,0 +1,46 @@
+//reducerea preturilor produselor dinainte de 2023
+
+#include<stdio.h>
+#include<conio.h>
+typedef struct {
+    char nume[20], tip[20], luna[20];
+    float pret;
+    int zi, an;
+    char is;
+}Inventar;
+
+int nrArt(FILE* f, int l)
+{
+     int n;
+    fseek(f, 0, SEEK_END);
+    n = ftell(f) / l;
+    return n;
+
+}
+int main()
+{
+    FILE* f;
+    int cod, i;
+    Inventar m;
+    f = fopen("Inventar.dat", "rb+");
+    fread(&m, sizeof(Inventar), 1, f);
+    cod = 0;
+    while (!feof(f))
+    {
+        if (m.is)
+        {
+            cod++;
+            if (m.an < 2023)
+            {
+                m.pret = m.pret - m.pret / 10;
+                fseek(f, ftell(f) - sizeof(Inventar), 0);
+                fwrite(&m, sizeof(Inventar), 1, f);
+                fseek(f, 0, 1);
+            }
+        }
+        fread(&m, sizeof(Inventar), 1, f);
+    }
+    fclose(f);
+    _getch();
+    return 0;
+}
